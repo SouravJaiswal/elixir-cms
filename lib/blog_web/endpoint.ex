@@ -18,8 +18,6 @@ defmodule BlogWeb.Endpoint do
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
   if code_reloading? do
-    socket "/phoenix/live_reload/socket", Phoenix.LiveReloader.Socket
-    plug Phoenix.LiveReloader
     plug Phoenix.CodeReloader
   end
 
@@ -40,7 +38,7 @@ defmodule BlogWeb.Endpoint do
   plug Plug.Session,
     store: :cookie,
     key: "_blog_key",
-    signing_salt: "KY2epMyp"
+    signing_salt: "ngztRiDk"
 
   plug BlogWeb.Router
 end

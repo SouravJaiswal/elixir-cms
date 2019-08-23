@@ -13,8 +13,8 @@ config :blog,
 # Configures the endpoint
 config :blog, BlogWeb.Endpoint,
   url: [host: "localhost"],
-  secret_key_base: "fJbU7vfrBW+5ZBxMp1/3pyOpo+9j2viQZN47WlvJGOEZcY5QMxyumnuDvyeBsUd6",
-  render_errors: [view: BlogWeb.ErrorView, accepts: ~w(html json)],
+  secret_key_base: "jWaAkp6pfUgMqxm5sc0wWhmBhO+OeF8snjTcTyO5ayzoCRAPjGPhEWVZLGMZF/MA",
+  render_errors: [view: BlogWeb.ErrorView, accepts: ~w(json)],
   pubsub: [name: Blog.PubSub, adapter: Phoenix.PubSub.PG2]
 
 # Configures Elixir's Logger
