@@ -1,0 +1,58 @@
+/* This file is for your main application css. */
+
+@import "custom";
+@import '../node_modules/bootstrap/scss/bootstrap';
+
+
+main.container{
+  margin-top: 20px;
+}
+
+.jumbotron .container{
+  text-align: center;
+}
+
+
+.container.post-control-block{
+
+  margin-top: 10px;
+  font-size: 20px;
+  margin-bottom: 50px;
+
+  span{
+    margin-right: 10px;
+    font-weight: 100;
+    
+    a:link {
+      color: #000;
+    }
+  }
+}
+
+
+.post-brief{
+  height:340px;
+  color: #000;
+
+  a:link{
+    color: #000;
+    text-decoration: none;
+  }
+
+  a:hover{
+    text-decoration: none;
+  }
+
+}
+
+#index-container{
+  margin-top: 40px;
+}
+
+#post-title-date{
+  font-size: 12px;
+}
+
+div.post-body{
+  white-space: pre-line;
+}

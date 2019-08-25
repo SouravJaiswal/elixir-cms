@@ -1,0 +1,26 @@
+<div class="jumbotron jumbotron-fluid">
+  <div class="container">
+    <h1 class="display-4"><%= @post.title %></h1>
+    <p class="lead" id="post-title-date">updated at <%= format_date(@post.updated_at) %></p>
+  </div>
+</div>
+<div class="container post-body">
+  <%= @post.body %>
+</div>
+<div class=" container post-control-block">
+  <span>
+    <%= link to: Routes.post_path(@conn, :edit, @post) do %>
+      <i class="far fa-edit"></i>
+    <% end %>
+  </span>
+  
+  <span>
+    <%= link to: Routes.post_path(@conn, :delete, @post), method: :delete, data: [confirm: "Are you sure?"] do %>
+      <i class="far fa-trash-alt"></i>
+    <% end %>
+  </span>
+</div>
+
+
+
+

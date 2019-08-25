@@ -5,11 +5,21 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Blog</title>
+    <script src="https://kit.fontawesome.com/04a04631ec.js"></script>
     <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
   </head>
   <body>
-    <main role="main" class="container">
-      <%= render @view_module, @view_template, assigns %>
+    <!-- Just an image -->
+    <nav class="navbar navbar-light bg-light">
+      <a class="navbar-brand" href="<%= Routes.post_path(@conn, :index) %>">
+        Blog
+      </a>
+      <span><%= link "New Post", to: Routes.post_path(@conn, :new), class: "btn btn-outline-primary" %></span>
+    </nav>
+    <main role="main">
+      <div>
+        <%= render @view_module, @view_template, assigns %>
+      </div>
     </main>
     <script type="text/javascript" src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
   </body>

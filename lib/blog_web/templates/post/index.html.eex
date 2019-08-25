@@ -1,0 +1,17 @@
+<div class="container" id="index-container">
+<div class="row">
+<%= for post <- @posts do %>
+<div class="col-sm-4">
+  <div class="card post-brief">
+    <%= link to: Routes.post_path(@conn, :show, post) do %>
+      <img src="https://via.placeholder.com/150x75" class="card-img-top" alt="...">
+    <% end %>
+    <div class="card-body">
+      <h5 class="card-title"><%= link post.title, to: Routes.post_path(@conn, :show, post)%></h5>
+      <p class="card-text"><%= display_brief(post.body) %></p>
+    </div>
+  </div>
+</div>
+<% end %>
+</div>
+</div>

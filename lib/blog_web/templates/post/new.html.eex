@@ -1,0 +1,11 @@
+<div class="jumbotron jumbotron-fluid">
+  <div class="container">
+    <h1 class="display-4">New post</h1>
+  </div>
+</div>
+
+<div class="container">
+  <%= render "form.html", Map.put(assigns, :action, Routes.post_path(@conn, :create)) %>
+</div>
+
+
