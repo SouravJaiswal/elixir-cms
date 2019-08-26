@@ -63,7 +63,8 @@ config :blog, BlogWeb.Endpoint,
       ~r"lib/blog_web/{live,views}/.*(ex)$",
       ~r"lib/blog_web/templates/.*(eex)$"
     ]
-  ]
+  ],
+  uploads_directory: "/Users/soujaisw/practice/blog/assets/static/uploads"
 
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, format: "[$level] $message\n"

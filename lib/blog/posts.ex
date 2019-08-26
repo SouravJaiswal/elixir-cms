@@ -18,7 +18,7 @@ defmodule Blog.Posts do
 
   """
   def list_posts do
-    Repo.all(Post)
+    Repo.all(from(m in Post, preload: [:upload]))
   end
 
   @doc """
@@ -35,7 +35,10 @@ defmodule Blog.Posts do
       ** (Ecto.NoResultsError)
 
   """
-  def get_post!(id), do: Repo.get!(Post, id)
+  def get_post!(id) do
+    post = Repo.get!(Post, id)
+    Repo.preload(post, :upload)
+  end
 
   @doc """
   Creates a post.

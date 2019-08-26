@@ -3,6 +3,7 @@ defmodule BlogWeb.PostController do
 
   alias Blog.Posts
   alias Blog.Posts.Post
+  alias Blog.Documents
 
   def index(conn, _params) do
     posts = Posts.list_posts()
@@ -15,12 +16,13 @@ defmodule BlogWeb.PostController do
   end
 
   def create(conn, %{"post" => post_params}) do
-    case Posts.create_post(post_params) do
-      {:ok, post} ->
-        conn
-        |> put_flash(:info, "Post created successfully.")
-        |> redirect(to: Routes.post_path(conn, :show, post))
-
+    with {:ok, post} <- Posts.create_post(post_params),
+         {:ok, _header_image} <-
+           Documents.create_upload_from_plug_upload(post, post_params["header_image"]) do
+      conn
+      |> put_flash(:info, "Post created successfully.")
+      |> redirect(to: Routes.post_path(conn, :show, post))
+    else
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "new.html", changeset: changeset)
     end
