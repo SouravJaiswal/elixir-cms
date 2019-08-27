@@ -20,7 +20,8 @@ config :blog, BlogWeb.Endpoint,
   debug_errors: true,
   code_reloader: true,
   check_origin: false,
-  watchers: []
+  watchers: [],
+  uploads_directory: "/Users/soujaisw/practice/blog/assets/static/uploads"
 
 # ## SSL Support
 #
