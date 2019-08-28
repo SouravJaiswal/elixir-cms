@@ -1,6 +1,22 @@
 defmodule BlogWeb.PostView do
   use BlogWeb, :view
   alias BlogWeb.PostView
+  alias Blog.Documents.Upload
+
+  defp header_image_url(%Upload{:filename => ""}) do
+    ""
+  end
+
+  defp header_image_url(%Upload{} = upload) do
+    BlogWeb.Router.Helpers.static_path(
+      BlogWeb.Endpoint,
+      "/uploads/" <> "#{upload.id}-#{upload.filename}"
+    )
+  end
+
+  defp header_image_url(_) do
+    ""
+  end
 
   def render("index.json", %{posts: posts}) do
     %{data: render_many(posts, PostView, "post.json")}
@@ -11,8 +27,11 @@ defmodule BlogWeb.PostView do
   end
 
   def render("post.json", %{post: post}) do
-    %{id: post.id,
+    %{
+      id: post.id,
       title: post.title,
-      body: post.body}
+      body: post.body,
+      header_image: header_image_url(post.upload)
+    }
   end
 end

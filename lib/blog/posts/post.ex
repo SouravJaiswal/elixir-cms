@@ -3,8 +3,10 @@ defmodule Blog.Posts.Post do
   import Ecto.Changeset
 
   schema "posts" do
-    field :body, :string
-    field :title, :string
+    field(:body, :string)
+    field(:title, :string)
+
+    has_one(:upload, Blog.Documents.Upload, on_delete: :delete_all)
 
     timestamps()
   end
