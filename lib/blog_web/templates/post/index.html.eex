@@ -4,7 +4,7 @@
 <div class="col-sm-4">
   <div class="card post-brief">
     <%= link to: Routes.post_path(@conn, :show, post) do %>
-      <img src="https://via.placeholder.com/150x75" class="card-img-top" alt="...">
+      <img src="<%= header_image_url(:thumbnail, post) %>" class="card-img-top" alt="...">
     <% end %>
     <div class="card-body">
       <h5 class="card-title"><%= link post.title, to: Routes.post_path(@conn, :show, post)%></h5>

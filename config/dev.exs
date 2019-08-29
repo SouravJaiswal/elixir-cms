@@ -7,7 +7,7 @@ config :blog, Blog.Repo,
   database: "blog_dev",
   hostname: "localhost",
   show_sensitive_data_on_connection_error: true,
-  pool_size: 10
+  pool_size: 20
 
 # For development, we disable any cache and enable
 # debugging and code reloading.
@@ -63,7 +63,8 @@ config :blog, BlogWeb.Endpoint,
       ~r"lib/blog_web/{live,views}/.*(ex)$",
       ~r"lib/blog_web/templates/.*(eex)$"
     ]
-  ]
+  ],
+  uploads_directory: "/Users/soujaisw/practice/blog/assets/static/uploads"
 
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, format: "[$level] $message\n"

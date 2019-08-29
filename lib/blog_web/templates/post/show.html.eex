@@ -1,4 +1,4 @@
-<div class="jumbotron jumbotron-fluid">
+<div id="post-header-image"class="jumbotron jumbotron-fluid" style="background-image: url(<%= header_image_url(:full, @post) %>)">
   <div class="container">
     <h1 class="display-4"><%= @post.title %></h1>
     <p class="lead" id="post-title-date">updated at <%= format_date(@post.updated_at) %></p>
