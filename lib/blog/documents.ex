@@ -103,6 +103,131 @@ defmodule Blog.Documents do
     Upload.changeset(upload, %{})
   end
 
+  defp delete_header_image(%Upload{:filename => ""}) do
+    :ok
+  end
+
+  defp delete_header_image(%Upload{} = upload) do
+    case File.stat(Upload.local_path(upload.id, upload.filename)) do
+      {:error, :enoent} ->
+        :ok
+
+      {:ok, _} ->
+        File.rm!(Upload.local_path(upload.id, upload.filename))
+
+        File.rm!(
+          Upload.local_path(
+            Integer.to_string(upload.id) <> "-timg",
+            upload.filename
+          )
+        )
+    end
+  end
+
+  def update_upload_from_plug_upload(
+        post,
+        %Plug.Upload{
+          filename: filename,
+          path: tmp_path,
+          content_type: content_type
+        }
+      ) do
+    hash =
+      File.stream!(tmp_path, [], 2048)
+      |> Upload.sha256()
+
+    previous_hash = post.upload.hash
+
+    case hash do
+      ^previous_hash ->
+        {:ok, post.upload}
+
+      _ ->
+        Repo.transaction(fn ->
+          with {:ok, %File.Stat{size: size}} <- File.stat(tmp_path),
+               upload <- get_upload!(post.upload.id),
+               {:ok, header_image} <-
+                 upload
+                 |> Ecto.Changeset.change(%{
+                   filename: filename,
+                   content_type: content_type,
+                   size: size,
+                   hash: hash
+                 })
+                 |> Repo.update(),
+               :ok <-
+                 File.cp(
+                   tmp_path,
+                   Upload.local_path(header_image.id, filename)
+                 ),
+               _header_image_thumbnail <-
+                 open(Upload.local_path(header_image.id, filename))
+                 |> resize("350x175")
+                 |> save(
+                   path:
+                     Upload.local_path(Integer.to_string(header_image.id) <> "-timg", filename)
+                 ),
+               :ok <- delete_header_image(post.upload) do
+            {:ok, header_image}
+          else
+            {:error, reason} -> Repo.rollback(reason)
+          end
+        end)
+    end
+  end
+
+  def update_upload_from_plug_upload(
+        post,
+        nil
+      ) do
+    Repo.transaction(fn ->
+      with upload <-
+             get_upload!(post.upload.id),
+           {:ok, header_image} <-
+             upload
+             |> Ecto.Changeset.change(%{
+               filename: "",
+               content_type: "",
+               size: 0,
+               hash: ""
+             })
+             |> Repo.update(),
+           :ok <- delete_header_image(upload) do
+        {:ok, header_image}
+      else
+        {:error, reason} -> Repo.rollback(reason)
+      end
+    end)
+  end
+
+  defp header_image_delete(id, filename) do
+    with :ok <-
+           File.rm(Upload.local_path(id, filename)),
+         :ok <-
+           File.rm(Upload.local_path(Integer.to_string(id) <> "-timg", filename)) do
+      IO.puts("works")
+      :ok
+    else
+      {:error, _reason} -> :error
+    end
+  end
+
+  defp header_image_create(tmp_path, id, filename) do
+    with :ok <-
+           File.cp(
+             tmp_path,
+             Upload.local_path(id, filename)
+           ),
+         _ <-
+           open(Upload.local_path(id, filename))
+           |> resize("350x175")
+           |> save(path: Upload.local_path(Integer.to_string(id) <> "-timg", filename)) do
+      :ok
+    else
+      {:error, _reason} -> header_image_delete(id, filename)
+    end
+  end
+
   def create_upload_from_plug_upload(
         post,
         %Plug.Upload{
@@ -114,6 +239,8 @@ defmodule Blog.Documents do
     hash =
       File.stream!(tmp_path, [], 2048)
       |> Upload.sha256()
+
+    header_image = %Upload{}
 
     Repo.transaction(fn ->
       with {:ok, %File.Stat{size: size}} <- File.stat(tmp_path),
@@ -127,17 +254,31 @@ defmodule Blog.Documents do
            {:ok, header_image} <-
              header_image
              |> Repo.insert(),
-           :ok <-
-             File.cp(
-               tmp_path,
-               Upload.local_path(header_image.id, filename)
-             ),
-           header_image_thumbnail <-
-             open(Upload.local_path(header_image.id, filename))
-             |> resize("350x175")
-             |> save(
-               path: Upload.local_path(Integer.to_string(header_image.id) <> "-timg", filename)
-             ) do
+           :ok <- header_image_create(tmp_path, header_image.id, filename) do
+        {:ok, header_image}
+      else
+        {:error, reason} ->
+          header_image_delete(header_image.id, filename)
+          Repo.rollback(reason)
+      end
+    end)
+  end
+
+  def create_upload_from_plug_upload(
+        post,
+        nil
+      ) do
+    Repo.transaction(fn ->
+      with header_image <-
+             Ecto.build_assoc(post, :upload, %{
+               filename: "",
+               content_type: "",
+               hash: "",
+               size: 0
+             }),
+           {:ok, header_image} <-
+             header_image
+             |> Repo.insert() do
         {:ok, header_image}
       else
         {:error, reason} -> Repo.rollback(reason)

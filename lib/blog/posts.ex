@@ -40,6 +40,10 @@ defmodule Blog.Posts do
     Repo.preload(post, :upload)
   end
 
+  def preload_upload(post) do
+    Repo.preload(post, :upload)
+  end
+
   @doc """
   Creates a post.
 
@@ -88,6 +92,11 @@ defmodule Blog.Posts do
       {:error, %Ecto.Changeset{}}
 
   """
+
+  def delete_post(nil) do
+    {:ok, nil}
+  end
+
   def delete_post(%Post{} = post) do
     Repo.delete(post)
   end

@@ -1,5 +1,6 @@
 defmodule BlogWeb.PostView do
   use BlogWeb, :view
+  alias Blog.Documents.Upload
 
   def format_date(date) do
     {:ok, date} = DateTime.from_naive(date, "Etc/UTC")
@@ -17,8 +18,18 @@ defmodule BlogWeb.PostView do
     body
   end
 
-  def header_image_url(type, post) do
-    header_image(type, post.upload)
+  def header_image_url(type, %Blog.Posts.Post{:upload => nil} = _post) do
+    header_image(type, nil)
+  end
+
+  def header_image_url(type, %Blog.Posts.Post{:upload => upload} = post) do
+    case File.stat(Upload.local_path(upload.id, upload.filename)) do
+      {:ok, _} ->
+        header_image(type, upload)
+
+      {:error, _} ->
+        header_image(type, nil)
+    end
   end
 
   defp header_image(:full, %Blog.Documents.Upload{} = upload) do
