@@ -74,40 +74,11 @@ defmodule Blog.Documents do
     |> Repo.update()
   end
 
-  @doc """
-  Deletes a Upload.
-
-  ## Examples
-
-      iex> delete_upload(upload)
-      {:ok, %Upload{}}
-
-      iex> delete_upload(upload)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_upload(%Upload{} = upload) do
-    Repo.delete(upload)
-  end
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking upload changes.
-
-  ## Examples
-
-      iex> change_upload(upload)
-      %Ecto.Changeset{source: %Upload{}}
-
-  """
-  def change_upload(%Upload{} = upload) do
-    Upload.changeset(upload, %{})
-  end
-
-  defp delete_header_image(%Upload{:filename => ""}) do
+  def delete_header_image(%Upload{:filename => ""}) do
     :ok
   end
 
-  defp delete_header_image(%Upload{} = upload) do
+  def delete_header_image(%Upload{} = upload) do
     case File.stat(Upload.local_path(upload.id, upload.filename)) do
       {:error, :enoent} ->
         :ok
@@ -122,6 +93,36 @@ defmodule Blog.Documents do
           )
         )
     end
+  end
+
+  @doc """
+  Deletes a Upload.
+
+  ## Examples
+
+      iex> delete_upload(upload)
+      {:ok, %Upload{}}
+
+      iex> delete_upload(upload)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_upload(%Upload{} = upload) do
+    delete_header_image(upload)
+    Repo.delete(upload)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking upload changes.
+
+  ## Examples
+
+      iex> change_upload(upload)
+      %Ecto.Changeset{source: %Upload{}}
+
+  """
+  def change_upload(%Upload{} = upload) do
+    Upload.changeset(upload, %{})
   end
 
   def update_upload_from_plug_upload(

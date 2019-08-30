@@ -7,6 +7,7 @@ defmodule Blog.Posts do
   alias Blog.Repo
 
   alias Blog.Posts.Post
+  alias Blog.Documents
 
   @doc """
   Returns the list of posts.
@@ -98,6 +99,7 @@ defmodule Blog.Posts do
   end
 
   def delete_post(%Post{} = post) do
+    Documents.delete_header_image(post.upload)
     Repo.delete(post)
   end
 
